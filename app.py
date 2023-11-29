@@ -69,7 +69,7 @@ def delete():
         return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
 
-@app.route("/default")  # Default - Show Data
+@app.route("/default")  
 def read():
     try:
         cur = mysql.connection.cursor()
