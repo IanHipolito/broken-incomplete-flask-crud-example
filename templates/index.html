@@ -46,7 +46,6 @@
 
   <script>
     $(document).ready(function() {
-      // Get all students
       $.ajax({
         url: '/default',
         method: 'GET',
@@ -61,7 +60,6 @@
         }
       });
 
-      // Add student
       $('#addStudentButton').on('click', function() {
         var name = $('#addName').val();
         var email = $('#addEmail').val();
@@ -82,7 +80,6 @@
         });
       });
 
-      // Update student
       $('#updateStudentButton').on('click', function() {
         var id = $('#id').val();
         var name = $('#updateName').val();
@@ -104,7 +101,6 @@
         });
       });
 
-      // Delete student
       $('#deleteStudentButton').on('click', function() {
         var name = $('#deleteName').val();
 
