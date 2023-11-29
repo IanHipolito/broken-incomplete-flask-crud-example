@@ -1,26 +1,22 @@
 CREATE USER 'A'@'%' IDENTIFIED BY 'B';
-GRANT ALL PRIVILEGES ON *.* to 'A'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'A'@'%';
 
 CREATE DATABASE student;
 USE student;
 
 CREATE TABLE students (
-    studentID INT NOT NULL AUTOINCREMENT,
-    studentName VARCHAR(255),
-    course VARCHAR(255),
-    year INT,
-    PRIMARY KEY(studentID)
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    PRIMARY KEY (id)
 );
 
-INSERT INTO students (studentName, course, year) VALUES (p_studentName, p_course, p_year);
+INSERT INTO students (name, email) VALUES ('p_name', 'p_email');
 
 SELECT * FROM students;
 
-SELECT * FROM students WHERE studentID = p_studentID;
+SELECT * FROM students WHERE id = p_id;
 
-UPDATE students SET studentName = p_studentName, course = p_course, year = p_year WHERE studentID = p_studentID;
+UPDATE students SET name = 'p_name', email = 'p_email' WHERE id = p_id;
 
-DELETE FROM students WHERE studentID = p_studentID;
-
-
-
+DELETE FROM students WHERE id = p_id;
