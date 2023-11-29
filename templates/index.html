@@ -1,52 +1,163 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Student Management System</title>
-</head>
-<body>
-    <h1>Student Management System</h1>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                background: rgb(2,0,36);
+                background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,121,121,1) 0%, rgba(0,212,255,1) 100%);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+                margin: 0;
+            }
+        
+            #addStudentForm {
+                border: 1px solid #f1f1f1;
+                padding: 20px;
+            }
 
-    <h2>Add Student</h2>
-    <form id="addStudentForm">
-        Name: <input type="text" id="name" required>
-        Email: <input type="email" id="email" required>
-        <button type="submit">Add Student</button>
-    </form>
-
-    <h2>Students</h2>
-    <div id="studentData">
-    </div>
-
-    <script>
-
-        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var name = document.getElementById('name').value;
-            var email = document.getElementById('email').value;
+            form input {
+                width: 100%;
+                margin: 8px 0;
+                box-sizing: border-box;
+            }
             
-            fetch(`/add?name=${name}&email=${email}`)
+            form button {
+                background-color: #4CAF50;
+                color: white;
+                width: 50%;
+                padding: 12px 20px;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+            }
+
+            form button:hover {
+                opacity: 0.8;
+            }
+
+            form {
+                border-radius: 5px;
+                background-color: #f2f2f2;
+                padding: 20px;
+                border: 1px solid #f1f1f1;
+                width: 25%;
+                margin: auto;
+                margin-top: 10px;
+            }
+
+            form h2 {
+                color: white;
+                padding: 5px;
+                text-align: center;
+                background: #1a0530;
+                background: -moz-linear-gradient(left, #1a0530 0%, #4d004d 100%);
+            }
+
+            h1 {
+                background: #1a0530;
+                background: -moz-linear-gradient(left, #1a0530 0%, #4d004d 100%);
+                text-align: center;
+                color: white;
+                padding: 5px;              
+            }
+        </style>
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>PYTHON CRUD DATABASE</h1>
+    
+        <form action="/read" method="GET">
+            <h2>GET ALL STUDENTS</h2>
+
+            <button type="submit">SUBMIT</button>
+        </form>
+
+        <form action="/readStudent/" method="get">
+            <h2>GET STUDENT BY ID</h2>
+
+            <label for="studentId">Enter Student ID:</label>
+            <input type="text" id="studentId" name="id" required>
+            <br>
+            <button type="submit">SUBMIT</button>
+        </form>
+
+        <form id="addStudentForm" enctype="application/json" onsubmit="submitForm('write','addStudentForm'); return false;">
+            <h2>ADD STUDENT</h2>
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+        
+            <label for="course">Course:</label>
+            <input type="text" id="course" name="course" required><br>
+        
+            <label for="year">Year:</label>
+            <input type="text" id="year" name="year" required><br>
+        
+            <button type="submit">ADD</button>
+        </form>
+        
+        <form id="updateStudent" enctype="application/json" onsubmit="submitForm('update','updateStudent'); return false;">
+            <h2>UPDATE STUDENT</h2>
+
+            <label for="studentId">Enter Student ID:</label>
+            <input type="text" id="studentId" name="id" required>
+            <br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+        
+            <label for="course">Course:</label>
+            <input type="text" id="course" name="course" required><br>
+        
+            <label for="year">Year:</label>
+            <input type="text" id="year" name="year" required><br>
+        
+            <button type="submit">UPDATE</button>
+        </form>
+
+        <form action="/delete/" method="get">
+            <h2>DELETE STUDENT BY ID</h2>
+
+            <label for="studentId">Enter Student ID:</label>
+            <input type="text" id="studentId" name="id" required>
+            <br>
+            <button type="submit">SUBMIT</button>
+        </form>
+
+        <script>
+            function submitForm(path, id) {
+                event.preventDefault();
+
+                var formData = new FormData(document.getElementById(id));
+                
+                var jsonData = {};
+                formData.forEach(function(value, key){
+                    jsonData[key] = value;
+                });
+                
+                console.log('Form Data:', JSON.stringify(jsonData));
+
+
+                fetch('/' + path, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jsonData)
+                })
                 .then(response => response.json())
                 .then(data => {
-                    alert('Student added successfully!');
-                    fetchStudents(); 
+                    console.log(data);
+                    alert(data.msg);
                 })
-                .catch(error => alert('Error adding student: ' + error));
-        });
-
-        function fetchStudents() {
-            fetch('/')
-                .then(response => response.json())
-                .then(data => {
-                    var studentDataDiv = document.getElementById('studentData');
-                    studentDataDiv.innerHTML = ''; 
-                    data.Results.forEach(function(student) {
-                        studentDataDiv.innerHTML += `Name: ${student.Name}, Email: ${student.Email}<br>`;
-                    });
-                })
-                .catch(error => alert('Error fetching students: ' + error));
-        }
-
-        window.onload = fetchStudents;
-    </script>
-</body>
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error submitting the form.');
+                });
+            }
+        </script>
+    </body>
 </html>
