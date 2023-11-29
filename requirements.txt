@@ -1,4 +1,4 @@
 Flask
 flask_cors
-Flask-MySQLdb
+flask_mysqldb
 Gunicorn
