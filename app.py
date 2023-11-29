@@ -26,7 +26,7 @@ def execute_query(query):
         print("Error:", e)
         return False
 
-@app.route("/add", methods=['POST'])  # Add Student
+@app.route("/add", methods=['POST'])  
 def add():
     name = request.json.get('name')
     email = request.json.get('email')
@@ -41,7 +41,7 @@ def add():
     except Exception as e:
         return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
-@app.route("/update", methods=['PUT'])  # Update Student
+@app.route("/update", methods=['PUT'])  
 def update():
     try:
         id = int(request.form.get('id'))
@@ -56,7 +56,7 @@ def update():
     except Exception as e:
         return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
-@app.route("/delete", methods=['DELETE'])  # Delete Student
+@app.route("/delete", methods=['DELETE'])  
 def delete():
     try:
         name = request.args.get('deleteName')
@@ -70,7 +70,7 @@ def delete():
         return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
 
-@app.route("/default")  # Default - Show Data
+@app.route("/default")  
 def read():
     try:
         cur = mysql.connection.cursor()

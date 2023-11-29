@@ -11,12 +11,4 @@ CREATE TABLE students (
     PRIMARY KEY (id)
 );
 
-INSERT INTO students (name, email) VALUES ('p_name', 'p_email');
 
-SELECT * FROM students;
-
-SELECT * FROM students WHERE id = p_id;
-
-UPDATE students SET name = 'p_name', email = 'p_email' WHERE id = p_id;
-
-DELETE FROM students WHERE id = p_id;
