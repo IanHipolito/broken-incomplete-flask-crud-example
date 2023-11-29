@@ -30,7 +30,7 @@ def execute_query(query, params=None):
 def add():
     name = request.json.get('name')
     email = request.json.get('email')
-    query = "INSERT INTO students (studentName, email) VALUES (%s, %s)"
+    query = "INSERT INTO students (name, email) VALUES (%s, %s)"
     success = execute_query(query, (name, email))
 
     if success:
@@ -43,7 +43,7 @@ def update():
     id = int(request.form.get('id'))
     name = request.json.get('name')
     email = request.json.get('email')
-    query = "UPDATE students SET studentName = %s, email = %s WHERE studentID = %s"
+    query = "UPDATE students SET name = %s, email = %s id = %s"
     success = execute_query(query, (name, email, id))
 
     if success:
@@ -54,7 +54,7 @@ def update():
 @app.route("/delete", methods=['DELETE'])  
 def delete():
     name = request.args.get('deleteName')
-    query = "DELETE FROM students WHERE studentName = %s"
+    query = "DELETE FROM students WHERE name = %s"
     success = execute_query(query, (name,))
 
     if success:

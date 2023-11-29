@@ -11,11 +11,11 @@ CREATE TABLE students (
     PRIMARY KEY (id)
 );
 
-INSERT INTO students (studentName, email) VALUES (%s, %s);
+INSERT INTO students (name, email) VALUES (%s, %s);
 
-UPDATE students SET studentName = %s, email = %s WHERE studentID = %s;
+UPDATE students SET name = %s, email = %s WHERE id = %s;
 
-DELETE FROM students WHERE studentName = %s;
+DELETE FROM students WHERE name = %s;
 
 SELECT * FROM students;
 
