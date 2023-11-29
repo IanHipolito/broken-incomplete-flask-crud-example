@@ -13,60 +13,67 @@ app.config['MYSQL_DB'] = 'student'
 app.config['MYSQL_HOST'] = '34.147.249.208'
 mysql.init_app(app)
 
-def execute_query(query, params=None):
+def execute_query(query):
     try:
         cur = mysql.connection.cursor()
-        if params:
-            cur.execute(query, params)
-        else:
-            cur.execute(query)
+        print("Executing query:", query)
+        cur.execute(query)
         mysql.connection.commit()
+        print("Query executed successfully")
         return True
     except Exception as e:
         print("Error:", e)
         return False
 
-@app.route("/add", methods=['POST'])  
+@app.route("/add", methods=['POST']) 
 def add():
     name = request.json.get('name')
     email = request.json.get('email')
-    query = "INSERT INTO students (name, email) VALUES (%s, %s)"
-    success = execute_query(query, (name, email))
+    try:
+        query = '''INSERT INTO students(studentName, email) VALUES('{}', '{}');'''.format(name, email)
+        success = execute_query(query)
 
-    if success:
-        return '{"Result": "Success"}'
-    else:
-        return '{"Result": "Error"}'
+        if success:
+            return '{"Result": "Success"}'
+        else:
+            return '{"Result": "Error"}'
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
 @app.route("/update", methods=['PUT'])  
 def update():
-    id = int(request.form.get('id'))
-    name = request.json.get('name')
-    email = request.json.get('email')
-    query = "UPDATE students SET name = %s, email = %s id = %s"
-    success = execute_query(query, (name, email, id))
+    try:
+        id = int(request.form.get('id'))
+        name = request.json.get('name')
+        email = request.json.get('email')
 
-    if success:
+        query = '''UPDATE students SET studentName = '{}', email = '{}' WHERE studentID = {} ;'''.format(name, email, id)
+        print("Received Update Request. ID:", id, "Name:", name, "Email:", email)
+        success = execute_query(query)
+        print(success)
         return '{"Result": "Success"}'
-    else:
-        return '{"Result": "Error"}'
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
 
 @app.route("/delete", methods=['DELETE'])  
 def delete():
-    name = request.args.get('deleteName')
-    query = "DELETE FROM students WHERE name = %s"
-    success = execute_query(query, (name,))
+    try:
+        name = request.args.get('deleteName')
 
-    if success:
+        query = '''DELETE FROM students WHERE studentName='{}';'''.format(name)
+        success = execute_query(query)
+        print(success)
         return '{"Result": "Success"}'
-    else:
-        return '{"Result": "Error"}'
 
-@app.route("/default")  
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
+
+
+@app.route("/default")  # Default - Show Data
 def read():
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM students")
+        cur.execute('''SELECT * FROM students''')
         rv = cur.fetchall()
         Results = []
         for row in rv:
@@ -88,6 +95,7 @@ def read():
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port='8080')

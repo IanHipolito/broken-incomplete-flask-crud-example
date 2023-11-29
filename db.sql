@@ -5,17 +5,15 @@ CREATE DATABASE student;
 USE student;
 
 CREATE TABLE students (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255),
+    studentID INT NOT NULL AUTO_INCREMENT,
+    studentName VARCHAR(255),
     email VARCHAR(255),
-    PRIMARY KEY (id)
+    PRIMARY KEY (studentID)
 );
 
-INSERT INTO students (name, email) VALUES (%s, %s);
+INSERT INTO students (studentName, email) VALUES (%s, %s);
 
-UPDATE students SET name = %s, email = %s WHERE id = %s;
+UPDATE students SET studentName = %s, email = %s WHERE studentID = %s;
 
-DELETE FROM students WHERE name = %s;
-
-SELECT * FROM students;
+DELETE FROM students WHERE studentName = %s;
 
