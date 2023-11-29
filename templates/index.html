@@ -1,125 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Student Management</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <script>
+        function sendData(url, method, data) {
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
+        }
+
+        function addStudent() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            sendData('/add', 'POST', { name: name, email: email });
+        }
+
+        function updateStudent() {
+            const id = document.getElementById('id').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            sendData('/update', 'PUT', { id: id, name: name, email: email });
+        }
+
+        function deleteStudent() {
+            const name = document.getElementById('name').value;
+            sendData('/delete', 'DELETE', { name: name });
+        }
+
+        function getStudents() {
+            fetch('/default')
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 </head>
 <body>
-  <h1>Student Management</h1>
-
-  <h3>Add Student</h3>
-  <form id="addStudentForm">
-    <label for="addName">Name:</label>
-    <input type="text" id="addName" name="name">
-    <br>
-    <label for="email">Email:</label>
-    <input type="email" id="addEmail" name="email">
-    <br>
-    <button type="button" id="addStudentButton">Add Student</button>
-  </form>
-
-  <h3>Update Student</h3>
-  <form id="updateStudentForm">
-    <label for="studentID">ID:</label>
-    <input type="number" id="id" name="id">
-    <br>
-    <label for="name">Name:</label>
-    <input type="text" id="updateName" name="name">
-    <br>
-    <label for="email">Email:</label>
-    <input type="email" id="updateEmail" name="email">
-    <br>
-    <button type="button" id="updateStudentButton">Update Student</button>
-  </form>
-
-  <h3>Delete Student</h3>
-  <form id="deleteStudentForm">
-    <label for="name">Name:</label>
-    <input type="text" id="deleteName" name="name">
-    <br>
-    <button type="button" id="deleteStudentButton">Delete Student</button>
-  </form>
-
-  <h3>Student List</h3>
-  <h4> Student ID | Student Name | Student Email</h4>
-  <ul id="studentList"></ul>
-
-  <script>
-    $(document).ready(function() {
-      $.ajax({
-        url: '/default',
-        method: 'GET',
-        success: function(response) {
-          var students = response.Results;
-          for (var i = 0; i < students.length; i++) {
-            var student = students[i];
-            var li = $('<li>' + student.ID + '   -   ' + student.Name + '   -   ' + student.Email + '</li>');
-            li.attr('data-id', student.ID);
-            $('#studentList').append(li);
-          }
-        }
-      });
-
-      $('#addStudentButton').on('click', function() {
-        var name = $('#addName').val();
-        var email = $('#addEmail').val();
-
-        $.ajax({
-          url: '/add',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({ name: name, email: email }),
-          success: function(response) {
-            if (response.Result === 'Success') {
-              alert('Student added successfully!');
-              window.location.reload();
-            } else {
-              alert('Error adding student: ' + response.Message);
-            }
-          }
-        });
-      });
-
-      $('#updateStudentButton').on('click', function() {
-        var id = $('#id').val();
-        var name = $('#updateName').val();
-        var email = $('#updateEmail').val();
-
-        $.ajax({
-          url: '/update',
-          method: 'PUT',
-          contentType: 'application/json',
-          data: JSON.stringify({ id: id, name: name, email: email }),
-          success: function(response) {
-            if (response.Result == 'Success') {
-              alert('Student updated successfully!');
-              window.location.reload();
-            } else {
-              alert('Error updating student: ' + response.Message);
-            }
-          }
-        });
-      });
-
-      $('#deleteStudentButton').on('click', function() {
-        var name = $('#deleteName').val();
-
-        $.ajax({
-          url: '/delete',
-          method: 'DELETE',
-          contentType: 'application/json',
-          data: JSON.stringify({ name: name }),
-          success: function(response) {
-            if (response.Result === 'Success') {
-              alert('Student deleted successfully!');
-              window.location.reload();
-            } else {
-              alert('Error deleting student: ' + response.Message);
-            }
-          }
-        });
-      });
-    });
-  </script>
+    <h1>Student Management System</h1>
+    <input type="text" id="name" placeholder="Name">
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="id" placeholder="Student ID (for update only)">
+    <button onclick="addStudent()">Add Student</button>
+    <button onclick="updateStudent()">Update Student</button>
+    <button onclick="deleteStudent()">Delete Student</button>
+    <button onclick="getStudents()">Get All Students</button>
 </body>
 </html>
