@@ -65,7 +65,7 @@
         var email = $('#addEmail').val();
 
         $.ajax({
-          url: '/add',
+          url: 'add',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ name: name, email: email }),
