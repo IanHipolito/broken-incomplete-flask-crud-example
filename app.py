@@ -1,65 +1,102 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template
 from flask_mysqldb import MySQL
 from flask_cors import CORS
+import json
 
 mysql = MySQL()
 app = Flask(__name__)
 CORS(app)
 
-# Your MySQL configuration goes here
-app.config['MYSQL_USER'] = 'ian'
+# MySQL Instance configurations
+app.config['MYSQL_USER'] = 'luke'
 app.config['MYSQL_PASSWORD'] = 'secret'
 app.config['MYSQL_DB'] = 'student'
-app.config['MYSQL_HOST'] = '34.147.249.208'
+app.config['MYSQL_HOST'] = '34.125.223.69'
 mysql.init_app(app)
 
-def execute_query(query, args=()):
+def execute_query(query):
     try:
         cur = mysql.connection.cursor()
-        cur.execute(query, args)
+        print("Executing query:", query)
+        cur.execute(query)
         mysql.connection.commit()
-        return {'Result': 'Success'}
+        print("Query executed successfully")
+        return True
     except Exception as e:
-        return {'Result': 'Error', 'Message': str(e)}
+        print("Error:", e)
+        return False
 
-@app.route("/add", methods=['POST'])
+@app.route("/add", methods=['POST'])  # Add Student
 def add():
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    query = 'INSERT INTO students(studentName, email) VALUES(%s, %s);'
-    return jsonify(execute_query(query, (name, email)))
+    name = request.json.get('name')
+    email = request.json.get('email')
+    try:
+        query = '''INSERT INTO students(studentName, email) VALUES('{}', '{}');'''.format(name, email)
+        success = execute_query(query)
 
-@app.route("/update", methods=['PUT'])
+        if success:
+            return '{"Result": "Success"}'
+        else:
+            return '{"Result": "Error"}'
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
+
+@app.route("/update", methods=['PUT'])  # Update Student
 def update():
-    data = request.get_json()
-    student_id = data.get('id')
-    name = data.get('name')
-    email = data.get('email')
-    query = 'UPDATE students SET studentName = %s, email = %s WHERE studentID = %s;'
-    return jsonify(execute_query(query, (name, email, student_id)))
+    try:
+        id = int(request.form.get('id'))
+        name = request.json.get('name')
+        email = request.json.get('email')
 
-@app.route("/delete", methods=['DELETE'])
+        query = '''UPDATE students SET studentName = '{}', email = '{}' WHERE studentID = {} ;'''.format(name, email, id)
+        print("Received Update Request. ID:", id, "Name:", name, "Email:", email)
+        success = execute_query(query)
+        print(success)
+        return '{"Result": "Success"}'
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
+
+@app.route("/delete", methods=['DELETE'])  # Delete Student
 def delete():
-    data = request.get_json()
-    name = data.get('name')
-    query = 'DELETE FROM students WHERE studentName = %s;'
-    return jsonify(execute_query(query, (name,)))
+    try:
+        name = request.args.get('deleteName')
 
-@app.route("/default")
+        query = '''DELETE FROM students WHERE studentName='{}';'''.format(name)
+        success = execute_query(query)
+        print(success)
+        return '{"Result": "Success"}'
+
+    except Exception as e:
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
+
+
+@app.route("/default")  # Default - Show Data
 def read():
     try:
         cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM students')
-        rows = cur.fetchall()
-        students = [{'ID': row[0], 'Name': row[1], 'Email': row[2]} for row in rows]
-        return jsonify({'Results': students, 'Count': len(students)})
+        cur.execute('''SELECT * FROM students''')
+        rv = cur.fetchall()
+        Results = []
+        for row in rv:
+            Result = {}
+            Result['Name'] = row[0].replace('\n', ' ')
+            Result['Email'] = row[1]
+            Result['ID'] = row[2]
+            Results.append(Result)
+        response = {'Results': Results, 'count': len(Results)}
+        ret = app.response_class(
+            response=json.dumps(response),
+            status=200,
+            mimetype='application/json'
+        )
+        return ret
     except Exception as e:
-        return jsonify({'Result': 'Error', 'Message': str(e)})
-
+        return '{"Result": "Error", "Message": "' + str(e) + '"}'
+    
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port='8080')
