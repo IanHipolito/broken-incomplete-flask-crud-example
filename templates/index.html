@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+</head>
+<body>
+    <h1>Student Management System</h1>
+
+    <h2>Add Student</h2>
+    <form id="addStudentForm">
+        Name: <input type="text" id="name" required>
+        Email: <input type="email" id="email" required>
+        <button type="submit">Add Student</button>
+    </form>
+
+    <h2>Students</h2>
+    <div id="studentData">
+    </div>
+
+    <script>
+
+        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            
+            fetch(`/add?name=${name}&email=${email}`)
+                .then(response => response.json())
+                .then(data => {
+                    alert('Student added successfully!');
+                    fetchStudents(); 
+                })
+                .catch(error => alert('Error adding student: ' + error));
+        });
+
+        function fetchStudents() {
+            fetch('/')
+                .then(response => response.json())
+                .then(data => {
+                    var studentDataDiv = document.getElementById('studentData');
+                    studentDataDiv.innerHTML = ''; 
+                    data.Results.forEach(function(student) {
+                        studentDataDiv.innerHTML += `Name: ${student.Name}, Email: ${student.Email}<br>`;
+                    });
+                })
+                .catch(error => alert('Error fetching students: ' + error));
+        }
+
+        window.onload = fetchStudents;
+    </script>
+</body>
+</html>
